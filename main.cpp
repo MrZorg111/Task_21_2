@@ -5,6 +5,8 @@
 
 struct village {
     int buildings = 0;
+    int floor = 0;
+    int room = 0;
     int space_house = 0;
     int space_barn = 0;
     int space_bathhouse = 0;
@@ -36,6 +38,9 @@ struct village {
         else if (b != "-") {
             c = 4;
         }
+        else {
+            c = 5;
+        }
     }
 
 int main() {
@@ -44,7 +49,8 @@ int main() {
     std::cout << "Enter the number of plots:";
     std::cin >> n;
     village territory[n];
-    //territory.push_back(village());
+
+    //territory.floor_room.push_back(village());
     std::cout << "Enter the names of the buildings on this site:\n(House, Bathhouse, Barn, Garage\nIf there is no structure, put - .)\n";
     for (int i = 0; i < n; i++) {
         std::cout << "Plot number " << i + 1 << ":\n";
@@ -64,7 +70,7 @@ int main() {
                 case 3:
                     territory[i].buildings |= BATHHOUSE;
                     break;
-                case 4:
+                case 5:
                     std::cout << "The name of the building is incorrect.";
                     b--;
             }
@@ -73,7 +79,19 @@ int main() {
     for (int s = 0; s < n; s++) {
         switch (territory[s].buildings) {
             case HOUSE:
-                std::cout << ""
+                std::cout << "Enter the number floor:";
+                std::cin >> territory[s].floor;
+                std::cout << "Enter the number room:";
+                std::cin >> territory[s].room;
+            case GARAGE:
+                std::cout << "Enter the garage area:";
+                std::cin >> territory[s].space_garage;
+            case BARN:
+                std::cout << "Enter the barn area:";
+                std::cin >> territory[s].space_barn;
+            case BATHHOUSE:
+                std::cout << "Enter the bathhouse area:";
+                std::cin >> territory[s].space_bathhouse;
         }
     }
 
