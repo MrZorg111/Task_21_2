@@ -1,97 +1,88 @@
 #include <iostream>
-#include <string>
-#include <cstdlib>
 #include <vector>
+#include <string>
 
-struct village {
+struct suburban_area {
     int buildings = 0;
-    int floor = 0;
-    int room = 0;
-    int space_house = 0;
-    int space_barn = 0;
-    int space_bathhouse = 0;
     int space_garage = 0;
-    int oven_house = 0;
-    int bathhouse = 0;
+    int space_barn = 0;
+    struct house_data {
+        int ceiling_height = 0;
+        int floor;
+        std::vector<int> room[0][0];
+    };
+    struct bathhouse_data {
+        int space_bathhouse;
+        int furn_pipe;
+    };
+};
+    enum buildings_on_territory {
+        HOUSE = 1,
+        GARAGE = 2,
+        BARN = 4,
+        BATHHOUSE = 8,
+        NON = 16
+
+    };
+    enum house_plan {
+        BEDROOM = 3,
+        CHILDREN_ROOM = 6,
+        BATHROOM = 12,
+        LIVING_ROOM = 24,
+        KITCHEN = 48,
     };
 
-    enum build{
-         HOUSE = 1,
-         BARN = 2,
-         BATHHOUSE = 4,
-         GARAGE = 8,
-         OVEN = 16
- };
-    void code_for_switch (std::string b, int& c) {
-        if (b == "House") {
-            c = 0;
-        }
-        else if (b == "Garage") {
-            c = 1;
-        }
-        else if (b == "Barn") {
-            c = 2;
-        }
-        else if (b == "Bathhouse") {
-            c = 3;
-        }
-        else if (b != "-") {
-            c = 4;
-        }
-        else {
-            c = 5;
-        }
+void switch_code (std::string b, int& s) {
+    if (b == "House") {
+        s = 0;
     }
+    else if (b == "Garage") {
+        s = 1;
+    }
+    else if (b == "Barn") {
+        s = 2;
+    }
+    else if (b == "Bathhouse") {
+        s = 3;
+    }
+    else if (b == "-") {
+        s = 4;
+    }
+    else {
+        s = 5;
+    }
+}
 
 int main() {
-    std::string build, answer;
-    int switch_code = 0, n = 0;
-    std::cout << "Enter the number of plots:";
+    int n, switch_code_number = 0;
+    std::string build;
+    std::cout << "Enter the number of land plots:";
     std::cin >> n;
-    village territory[n];
-
-    //territory.floor_room.push_back(village());
-    std::cout << "Enter the names of the buildings on this site:\n(House, Bathhouse, Barn, Garage\nIf there is no structure, put - .)\n";
-    for (int i = 0; i < n; i++) {
-        std::cout << "Plot number " << i + 1 << ":\n";
-        for (int b = 0; b < 4; b++) {
-            std::cin >> build;
-            code_for_switch(build, switch_code);
-            switch (switch_code) {
-                case 0:
-                    territory[i].buildings |= HOUSE;
-                    break;
-                case 1:
-                    territory[i].buildings |= GARAGE;
-                    break;
-                case 2:
-                    territory[i].buildings |= BARN;
-                    break;
-                case 3:
-                    territory[i].buildings |= BATHHOUSE;
-                    break;
-                case 5:
-                    std::cout << "The name of the building is incorrect.";
-                    b--;
-            }
-        }
-    }
-    for (int s = 0; s < n; s++) {
-        switch (territory[s].buildings) {
-            case HOUSE:
-                std::cout << "Enter the number floor:";
-                std::cin >> territory[s].floor;
-                std::cout << "Enter the number room:";
-                std::cin >> territory[s].room;
-            case GARAGE:
-                std::cout << "Enter the garage area:";
-                std::cin >> territory[s].space_garage;
-            case BARN:
-                std::cout << "Enter the barn area:";
-                std::cin >> territory[s].space_barn;
-            case BATHHOUSE:
-                std::cout << "Enter the bathhouse area:";
-                std::cin >> territory[s].space_bathhouse;
+    suburban_area suburban[n];
+    std::cout << "Enter the name of the building present on the site: (House, garage, bathhouse, barn)";
+    std::cin >> build;
+    switch_code(build, switch_code_number);
+    for (int b = 0; b < n; b++) {
+        switch (switch_code_number) {
+            case 0:
+                suburban[b].buildings |= HOUSE;
+                break;
+            case 1:
+                suburban[b].buildings |= GARAGE;
+                break;
+            case 2:
+                suburban[b].buildings |= BARN;
+                break;
+            case 3:
+                suburban[b].buildings |= BATHHOUSE;
+                break;
+            case 4:
+                suburban[b].buildings |= NON;
+                break;
+            case 5:
+                std::cout << "Invalid code!";
+                b--;
+                break;
         }
     }
 
