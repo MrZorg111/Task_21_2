@@ -4,15 +4,22 @@
 
 struct suburban_area {
     int buildings = 0;
+    std::string furn_pipe_house = "No";
     int space_garage = 0;
     int space_barn = 0;
     struct house_data {
+        int floor = 0;
         int ceiling_height = 0;
-        int room;
+        int room = 0;
+        int space_bedroom = 0;
+        int space_childrenroom = 0;
+        int space_bathroom = 0;
+        int space_livingroom = 0;
+        int space_kitchen = 0;
     }house_dt;
     struct bathhouse_data {
-        int space_bathhouse;
-        int furn_pipe;
+        int space_bathhouse = 0;
+        std::string furn_pipe_bathhouse = "No";
     }bathhouse_data;
 };
     enum buildings_on_territory {
@@ -43,7 +50,7 @@ void switch_code (std::string b, int& s) {
         s = 3;
     }
 }
-void switch_code_room (std::string r, int& s) {
+void switch_code_room (std::string& r, int& s) {
     if (r == "Bedroom") {
         s = 0;
     }
@@ -62,64 +69,101 @@ void switch_code_room (std::string r, int& s) {
 }
 
 int main() {
-    int switch_code_number = 0, switch_room_name = 0;
-    std::string build, name_r, answer = "yes";
+    int switch_code_number = 0, switch_room_name = 0, plots = 0, rooms = 0;
+    std::string build, name_r;
     std::vector<suburban_area> suburban;
     suburban.push_back(suburban_area());
     std::vector<suburban_area::house_data> floor;
     floor.push_back(suburban_area::house_data());
-    std::cout << "Enter the name of the building present on the site: (House, garage, bathhouse, barn)\n";
-    std::cout << "To stop listing a building on this site, enter 0.";
+    std::cout << "Enter the number of plots: ";
+    std::cin >> plots;
 
-    for (int b = 0; answer == "yes"; b++) {
-        for (int plot = 0; build != "0"; plot++) {
+    for (int plot = 0; plot < plots; plot++) {
+        for (int b = 0; build != "0"; b++) {
+            std::cout << "Enter the name of the building present on the site: (House, garage, bathhouse, barn)\n";
+            std::cout << "To stop listing a building on this site, enter 0.";
             std::cin >> build;
             switch_code(build, switch_code_number);
             switch (switch_code_number) {
                 case 0:
-                    suburban[b].buildings |= HOUSE;
+                    suburban[plot].buildings |= HOUSE;
                     break;
                 case 1:
-                    suburban[b].buildings |= GARAGE;
+                    suburban[plot].buildings |= GARAGE;
                     break;
                 case 2:
-                    suburban[b].buildings |= BARN;
+                    suburban[plot].buildings |= BARN;
                     break;
                 case 3:
-                    suburban[b].buildings |= BATHHOUSE;
-                    break;
-            }
-        }
-        std::cout << "Are there any more plots left?(yes/no)";
-        std::cin >> answer;
-
-    }
-    answer = "yes";
-    std::cout << "Enter the names of the rooms on the 1st floor:\n";
-    std::cout << "To stop entering room names, enter 0.";
-
-    for (int room = 0; answer == "yes"; room++) {
-        for (int rooms; name_r != "0"; rooms++){
-            std::cin >> name_r;
-            switch_code_room(name_r, switch_room_name);
-            switch (switch_room_name) {
-                case 0:
-                    suburban[room].house_dt.room |= BEDROOM;
-                    break;
-                case 1:
-                    suburban[room].house_dt.room |= CHILDREN_ROOM;
-                    break;
-                case 2:
-                    suburban[room].house_dt.room |= BATHROOM;
-                    break;
-                case 3:
-                    suburban[room].house_dt.room |= LIVING_ROOM;
-                    break;
-                case 4:
-                    suburban[room].house_dt.room |= KITCHEN;
+                    suburban[plot].buildings |= BATHHOUSE;
                     break;
             }
         }
     }
+    for (int edifice = 0; edifice < plots; edifice++) {
+        std::cout << "Enter the data of the " << edifice + 1 << " section:\n";
+        if (suburban[edifice].buildings & HOUSE) {
+            std::cout << "Is there a stove with a pipe in the house? (yes/no):";
+            std::cin >> suburban[edifice].furn_pipe_house;
+            std::cout << "Enter the number of floors: ";
+            std::cin >> suburban[edifice].house_dt.floor;
+
+        for (int floor_h = 0; floor_h < suburban[edifice].house_dt.floor; floor_h++) {
+            std::cout << "Enter the number of rooms per "<< floor_h + 1 << " floor: ";
+            std::cin >> rooms;
+            std::cout << "\nAnd also enter the ceiling height on this floor: ";
+            std::cin >> floor[floor_h].ceiling_height;
+            for (int room = 0; room < rooms; room++) {
+                std::cout << "Enter the names of the rooms on the " << floor_h + 1 << "st floor:\n";
+                std::cout << "To stop entering room names, enter 0.\n";
+                std::cin >> name_r;
+                switch_code_room(name_r, switch_room_name);
+                switch (switch_room_name) {
+                    case 0:
+                        floor[floor_h].room |= BEDROOM;
+                        std::cout << "Enter the bedroom area:";
+                        std::cin >> floor[floor_h].space_bathroom;
+                        break;
+                    case 1:
+                        floor[floor_h].room |= CHILDREN_ROOM;
+                        std::cout << "Enter the childrenroom area:";
+                        std::cin >> floor[floor_h].space_childrenroom;
+                        break;
+                    case 2:
+                        floor[floor_h].room |= BATHROOM;
+                        std::cout << "Enter the bathroom area:";
+                        std::cin >> floor[floor_h].space_bathroom;
+                        break;
+                    case 3:
+                        floor[floor_h].room |= LIVING_ROOM;
+                        std::cout << "Enter the livingroom area:";
+                        std::cin >> floor[floor_h].space_livingroom;
+                        break;
+                    case 4:
+                        floor[floor_h].room |= KITCHEN;
+                        std::cout << "Enter the kitchen area:";
+                        std::cin >> floor[floor_h].space_kitchen;
+                        break;
+                }
+            }
+        }
+        }
+        if (suburban[edifice].buildings & GARAGE) {
+            std::cout << "Enter the garage area: ";
+            std::cin >> suburban[edifice].space_garage;
+        }
+        if (suburban[edifice].buildings & BARN) {
+            std::cout << "Enter the barn area: ";
+            std::cin >> suburban[edifice].space_barn;
+        }
+        if (suburban[edifice].buildings & BATHHOUSE) {
+            std::cout << "Enter the bathhouse area: ";
+            std::cin >> suburban[edifice].bathhouse_data.space_bathhouse;
+            std::cout << "Is there a stove with a pipe in the bath? (yes/no): ";
+            std::cin >> suburban[edifice].bathhouse_data.furn_pipe_bathhouse;
+        }
+
+    }
+    std::cout << "YAHHO!";
     return 0;
 }
